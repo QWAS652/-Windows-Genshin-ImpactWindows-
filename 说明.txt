@@ -1,0 +1,7 @@
+将此项目拉到桌面，点击里面的启动，如果不行，需要使用CMD命令需要先安Node.js和
+
+
+Git:https://git-scm.com/      Node.js:https://nodejs.org/ 
+ CMD命令一键安装:winget install OpenJS.NodeJS.LTS --silent; winget install Git.Git --silent
+备选:Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')
+进入项目的CMD目录输入npm run start即可使用

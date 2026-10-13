@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>桑多涅 · 个人主页</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg,
+      #e8f1fb 0%, #f2f7fd 40%, #e6eefb 70%, #f6f9ff 100%);
+    color: #1b1b1b;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* 柔和光斑 */
+  body::before,
+  body::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    width: 700px; height: 700px;
+    top: -200px; left: -150px;
+    background: radial-gradient(circle,
+      rgba(120, 180, 255, 0.55) 0%,
+      rgba(120, 180, 255, 0.15) 40%,
+      transparent 70%);
+    animation: blob1 24s ease-in-out infinite;
+  }
+  body::after {
+    width: 600px; height: 600px;
+    bottom: -180px; right: -120px;
+    background: radial-gradient(circle,
+      rgba(190, 160, 255, 0.45) 0%,
+      rgba(190, 160, 255, 0.1) 40%,
+      transparent 70%);
+    animation: blob2 30s ease-in-out infinite;
+  }
+  @keyframes blob1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(80px, 60px) scale(1.15); }
+    66%      { transform: translate(-40px, 100px) scale(0.9); }
+  }
+  @keyframes blob2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-100px, -60px) scale(1.2); }
+  }
+
+  /* 顶部导航 */
+  .nav {
+    height: 70px;
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+  }
+  .nav .logo {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #0a2d5a;
+  }
+  .nav ul {
+    display: flex;
+    gap: 42px;
+    list-style: none;
+  }
+  .nav li {
+    font-size: 15px;
+    color: #2a3d55;
+    opacity: 0.85;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+  }
+  .nav li:hover { opacity: 1; }
+
+  /* 主体 */
+  .main {
+    flex: 1;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* 左侧展示区 */
+  .stage {
+    position: absolute;
+    left: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 460px;
+    height: 400px;
+  }
+
+  /* 通用层 */
+  .layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: rotate(-3deg) scale(0.96);
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+  }
+  .layer.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: rotate(-3deg) scale(1);
+  }
+
+  /* 所有卡片共用的玻璃外观 */
+  .layer.code-card,
+  .layer.photo-card,
+  .layer.contact-card,
+  .layer.qq-card,
+  .layer.wechat-card {
+    padding: 18px 24px 24px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    box-shadow:
+      0 24px 60px rgba(100, 140, 200, 0.2),
+      0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  }
+
+  /* 代码卡片 */
+  .layer.code-card {
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .layer.code-card::before {
+    content: "";
+    position: absolute;
+    top: 14px; left: 16px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #ff5f57;
+    box-shadow: 17px 0 0 #febc2e, 34px 0 0 #28c840;
+  }
+  .layer.code-card .code {
+    margin-top: 24px;
+    white-space: pre;
+    color: #1f2937;
+  }
+  .code .kw  { color: #0000ff; }
+  .code .var { color: #001080; }
+  .code .key { color: #267f99; }
+  .code .str { color: #a31515; }
+
+  /* 照片卡片 */
+  .layer.photo-card {
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .layer.photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+  }
+
+  /* 联系方式相关卡片 */
+  .layer.contact-card,
+  .layer.qq-card,
+  .layer.wechat-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0a2d5a;
+    margin-bottom: 22px;
+    padding-left: 4px;
+  }
+
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(180, 210, 250, 0.6);
+    cursor: pointer;
+    font-size: 15px;
+    color: #1b1b1b;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .contact-btn:hover {
+    background: rgba(235, 245, 255, 0.98);
+    transform: translateX(4px);
+    box-shadow: 0 8px 20px rgba(100, 140, 200, 0.2);
+    border-color: rgba(120, 180, 250, 0.8);
+  }
+
+  .contact-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  /* QQ 号展示框（不可点击） */
+  .qq-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(180, 210, 250, 0.6);
+    font-size: 16px;
+    color: #0a2d5a;
+    font-weight: 500;
+    letter-spacing: 1px;
+    user-select: text;
+    cursor: text;
+  }
+
+  /* 返回按钮 */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #5a6e88;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+    opacity: 0.65;
+    transition: opacity 0.2s;
+    font-family: inherit;
+  }
+  .back-btn:hover { opacity: 1; }
+
+  /* 微信号展示 */
+  .wechat-id {
+    padding: 24px 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    border: 1px solid rgba(180, 210, 250, 0.5);
+    font-size: 18px;
+    color: #0a2d5a;
+    text-align: center;
+    letter-spacing: 2px;
+    font-weight: 500;
+    user-select: text;
+    cursor: text;
+  }
+
+  /* 头像 + 旋转圆环 */
+  .avatar-zone {
+    position: absolute;
+    top: 180px;
+    right: 100px;
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+  }
+
+  .ring-guide {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 520px; height: 520px;
+    margin-top: -260px; margin-left: -260px;
+    border: 1px solid rgba(80, 120, 180, 0.25);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .orbit {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    animation: orbit-spin 28s linear infinite;
+  }
+  @keyframes orbit-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .icon-dot {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      0 8px 24px rgba(100, 140, 200, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%; left: 50%;
+    animation: orbit-spin-reverse 28s linear infinite;
+  }
+  @keyframes orbit-spin-reverse {
+    from {
+      transform:
+        translate(-50%, -50%)
+        rotate(var(--angle))
+        translate(260px)
+        rotate(calc(-1 * var(--angle)))
+        rotate(0deg);
+    }
+    to {
+      transform:
+        translate(-50%, -50%)
+        rotate(var(--angle))
+        translate(260px)
+        rotate(calc(-1 * var(--angle)))
+        rotate(-360deg);
+    }
+  }
+
+  .icon-dot svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .avatar {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 10px rgba(255, 255, 255, 1),
+      0 0 0 11px rgba(180, 210, 250, 0.5),
+      0 20px 60px rgba(100, 140, 200, 0.3),
+      0 0 80px rgba(120, 180, 255, 0.5);
+    user-select: none;
+    z-index: 2;
+    background: #f0f0f0;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="logo">桑多涅</div>
+    <ul>
+      <li id="nav-home">首页</li>
+      <li id="nav-coffee">请作者喝咖啡 ☕</li>
+      <li>作者桑多涅 👤</li>
+      <li id="nav-contact">联系方式</li>
+    </ul>
+  </nav>
+
+  <div class="main">
+
+    <div class="stage" id="stage">
+
+      <!-- 首页：代码卡片 -->
+      <div class="layer code-card active" data-view="home">
+        <div class="code"><span class="kw">const</span> <span class="var">person</span> = {
+    <span class="key">age</span>: <span class="str">"为什么重要的东西总是离我而去？"</span>,
+    <span class="key">hobbies</span>: [<span class="str">"相见"</span>,
+               <span class="str">"离别"</span>,
+               <span class="str">"哥伦比娅"</span>],
+    <span class="key">state</span>: <span class="str">"你到底在哪儿？"</span>,
+    <span class="key">funFact</span>: <span class="str">"梦见你也在做梦"</span>
+}</div>
+      </div>
+
+      <!-- 照片 -->
+      <div class="layer photo-card" data-view="photo">
+        <img src="/img/222.JPG" alt="照片" />
+      </div>
+
+      <!-- 联系方式主菜单 -->
+      <div class="layer contact-card" data-view="contact">
+        <div class="contact-title">联系方式</div>
+        <div class="contact-list">
+          <button class="contact-btn" data-go="wechat">
+            <svg class="contact-icon" viewBox="0 0 32 32">
+              <path fill="#07C160" d="M12 5C6.5 5 2 8.6 2 13c0 2.5 1.5 4.7 3.7 6.2l-1 3.3 3.7-1.9c1 .3 2.1.4 3.2.4h.4c-.1-.5-.2-1-.2-1.5 0-4.4 4.2-7.9 9.3-7.9.4 0 .7 0 1.1.1C21.5 7.7 17.2 5 12 5z"/>
+              <circle cx="9" cy="11" r="1.3" fill="#fff"/>
+              <circle cx="15" cy="11" r="1.3" fill="#fff"/>
+              <path fill="#07C160" d="M30 19.5c0-4-4-7.2-8.8-7.2s-8.8 3.2-8.8 7.2 4 7.2 8.8 7.2c1 0 2-.2 2.9-.4l3 1.5-.8-2.6c2.2-1.3 3.7-3.3 3.7-5.7z"/>
+              <circle cx="18" cy="18" r="1.1" fill="#fff"/>
+              <circle cx="24.5" cy="18" r="1.1" fill="#fff"/>
+            </svg>
+            <span>微信</span>
+          </button>
+          <button class="contact-btn" data-go="qq">
+            <svg class="contact-icon" viewBox="0 0 32 32">
+              <path fill="#12B7F5" d="M16 3c-4 0-6.5 3.3-6.5 7.3 0 .8.1 1.5.2 2.1-1.8.7-3.2 2.2-3.2 4 0 1 .4 2 1.1 2.8-.6.5-1 1.1-1 1.6 0 .4.3.7.8.8.7.3 1.9.6 2.9.5.9 1.1 2.4 1.7 3.9 1.7s3-.6 3.9-1.7c1 .1 2.2-.2 2.9-.5.5-.1.8-.4.8-.8 0-.5-.4-1.1-1-1.6.7-.8 1.1-1.8 1.1-2.8 0-1.8-1.4-3.3-3.2-4 .1-.6.2-1.3.2-2.1C22.5 6.3 20 3 16 3z"/>
+              <ellipse cx="13" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+              <ellipse cx="19" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+              <ellipse cx="16" cy="15" rx="2" ry="1" fill="#FFB800"/>
+            </svg>
+            <span>QQ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- QQ 子菜单（只展示，不跳转） -->
+      <div class="layer qq-card" data-view="qq">
+        <button class="back-btn" data-back>← 上一级</button>
+        <div class="contact-title" style="margin-bottom:16px;">QQ</div>
+        <div class="contact-list">
+          <div class="qq-display">
+            <svg class="contact-icon" viewBox="0 0 32 32">
+              <path fill="#12B7F5" d="M16 3c-4 0-6.5 3.3-6.5 7.3 0 .8.1 1.5.2 2.1-1.8.7-3.2 2.2-3.2 4 0 1 .4 2 1.1 2.8-.6.5-1 1.1-1 1.6 0 .4.3.7.8.8.7.3 1.9.6 2.9.5.9 1.1 2.4 1.7 3.9 1.7s3-.6 3.9-1.7c1 .1 2.2-.2 2.9-.5.5-.1.8-.4.8-.8 0-.5-.4-1.1-1-1.6.7-.8 1.1-1.8 1.1-2.8 0-1.8-1.4-3.3-3.2-4 .1-.6.2-1.3.2-2.1C22.5 6.3 20 3 16 3z"/>
+              <ellipse cx="13" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+              <ellipse cx="19" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+            </svg>
+            <span>3599798848</span>
+          </div>
+          <div class="qq-display">
+            <svg class="contact-icon" viewBox="0 0 32 32">
+              <path fill="#12B7F5" d="M16 3c-4 0-6.5 3.3-6.5 7.3 0 .8.1 1.5.2 2.1-1.8.7-3.2 2.2-3.2 4 0 1 .4 2 1.1 2.8-.6.5-1 1.1-1 1.6 0 .4.3.7.8.8.7.3 1.9.6 2.9.5.9 1.1 2.4 1.7 3.9 1.7s3-.6 3.9-1.7c1 .1 2.2-.2 2.9-.5.5-.1.8-.4.8-.8 0-.5-.4-1.1-1-1.6.7-.8 1.1-1.8 1.1-2.8 0-1.8-1.4-3.3-3.2-4 .1-.6.2-1.3.2-2.1C22.5 6.3 20 3 16 3z"/>
+              <ellipse cx="13" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+              <ellipse cx="19" cy="12" rx="1.3" ry="1.5" fill="#fff"/>
+            </svg>
+            <span>3643436937</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 微信子菜单 -->
+      <div class="layer wechat-card" data-view="wechat">
+        <button class="back-btn" data-back>← 上一级</button>
+        <div class="contact-title" style="margin-bottom:16px;">微信</div>
+        <div class="wechat-id">A173520520Aa</div>
+      </div>
+
+    </div>
+
+    <!-- 头像 + 圆环 -->
+    <div class="avatar-zone">
+
+      <div class="ring-guide"></div>
+
+      <div class="orbit">
+
+        <div class="icon-dot" style="--angle: 0deg">
+          <svg viewBox="0 0 24 24" fill="#000">
+            <path d="M12 3 22 20H2z"/>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 45deg">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="1.8" fill="#61dafb"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4"
+                     stroke="#61dafb" stroke-width="0.9"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4"
+                     stroke="#61dafb" stroke-width="0.9"
+                     transform="rotate(60 12 12)"/>
+            <ellipse cx="12" cy="12" rx="10" ry="4"
+                     stroke="#61dafb" stroke-width="0.9"
+                     transform="rotate(120 12 12)"/>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 90deg">
+          <svg viewBox="0 0 24 24">
+            <rect width="24" height="24" rx="3" fill="#f7df1e"/>
+            <text x="12" y="17" font-size="11" font-weight="700"
+                  text-anchor="middle" fill="#000" font-family="Arial">JS</text>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 135deg">
+          <svg viewBox="0 0 24 24">
+            <rect width="24" height="24" rx="3" fill="#3178c6"/>
+            <text x="12" y="17" font-size="11" font-weight="700"
+                  text-anchor="middle" fill="#fff" font-family="Arial">TS</text>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 180deg">
+          <svg viewBox="0 0 24 24">
+            <path fill="#3c873a" d="M12 1.5 3 6.7v10.6l9 5.2 9-5.2V6.7z"/>
+            <text x="12" y="16" font-size="7" font-weight="700"
+                  text-anchor="middle" fill="#fff" font-family="Arial">JS</text>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 225deg">
+          <svg viewBox="0 0 24 24">
+            <path fill="#3776ab" d="M11.9 1.5c-4.5 0-4.3 2-4.3 2v2.3h4.4v.7H5.5S2 6 2 11.8c0 5.8 2.4 5.7 2.4 5.7h1.5v-2.6s0-2.5 2.4-2.5h4.2s2.3.1 2.3-2.2V3.8s.4-2.3-2.9-2.3z"/>
+            <path fill="#ffd43b" d="M12.1 22.5c4.5 0 4.3-2 4.3-2v-2.3h-4.4v-.7h6.5S22 18 22 12.2c0-5.8-2.4-5.7-2.4-5.7h-1.5v2.6s0 2.5-2.4 2.5h-4.2s-2.3-.1-2.3 2.2v5.5s-.4 2.3 2.9 2.3z"/>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 270deg">
+          <svg viewBox="0 0 24 24" fill="#181717">
+            <path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/>
+          </svg>
+        </div>
+
+        <div class="icon-dot" style="--angle: 315deg">
+          <svg viewBox="0 0 24 24">
+            <path fill="#41d1ff" d="m12 1 10 18-10 4-10-4z"/>
+            <path fill="#bd34fe" d="m12 1 5 9-5 2-5-2z"/>
+            <path fill="#ffea83" d="m12 21-10-4 5-9 5 2z"/>
+          </svg>
+        </div>
+
+      </div>
+
+      <div class="avatar">
+        <img src="/img/111.JPG" alt="头像" />
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const stage = document.getElementById('stage');
+
+    function show(view) {
+      document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+      const target = document.querySelector(`.layer[data-view="${view}"]`);
+      if (target) target.classList.add('active');
+    }
+
+    document.getElementById('nav-home').addEventListener('click',    () => show('home'));
+    document.getElementById('nav-coffee').addEventListener('click',  () => show('photo'));
+    document.getElementById('nav-contact').addEventListener('click', () => show('contact'));
+
+    document.querySelectorAll('[data-go]').forEach(el => {
+      el.addEventListener('click', () => show(el.dataset.go));
+    });
+
+    document.querySelectorAll('[data-back]').forEach(el => {
+      el.addEventListener('click', () => show('contact'));
+    });
+
+    // ★ 新增：读 URL 参数，带 ?view=photo 时自动切到照片视图 ★
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('view') === 'photo') {
+      show('photo');
+    }
+  </script>
+
+</body>
+</html>
